@@ -50,6 +50,15 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // If you're displaying the very last array in houses.houseArray, then load more
+        if indexPath.row == houses.houseArray.count - 1 && houses.continueLoading {
+            houses.getData {
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        }
+        
         // Minimum to populate the tableView
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         cell.textLabel?.text = "\(indexPath.row + 1). " + houses.houseArray[indexPath.row].name

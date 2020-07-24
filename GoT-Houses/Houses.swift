@@ -10,12 +10,13 @@ import Foundation
 
 class Houses {
     var houseArray: [HouseInfo] = []
-    var url = "https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50"
     var pageNumber = 1
+    
+    var continueLoading = true
     
     func getData(completed: @escaping () -> ()) {
         // Create a URL
-        let urlString = url
+        let urlString = "https://www.anapioficeandfire.com/api/houses?page=\(pageNumber)&pageSize=50"
         guard let url = URL(string: urlString) else {
             print("ERROR: Couldn't create a URL from \(urlString)")
             completed()
@@ -39,7 +40,13 @@ class Houses {
                 
                 let results = try JSONDecoder().decode([HouseInfo].self, from: data!)
 //                print("results: \(results)")
-                self.houseArray = results
+                
+                if results.count > 0 {
+                    self.pageNumber = self.pageNumber + 1
+                    self.houseArray = self.houseArray + results
+                } else {
+                    self.continueLoading = false
+                }
             } catch {
                 print("JSON ERROR: \(error.localizedDescription)")
             }
